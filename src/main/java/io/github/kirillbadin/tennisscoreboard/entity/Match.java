@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "matches", check = {
         @CheckConstraint(name = "chk_different_players", constraint = "first_player_id <> second_player_id"),
         @CheckConstraint(name = "chk_winner_one_of_players", constraint = "winner_id = first_player_id OR winner_id = second_player_id")
-})
+}) // "matches" является зарезервированным словом в некоторых СУБД.
+    // Здесь проблем не будет, но лучше не выбирать такие названия. (см. файл "sql-keywords.md" в этом же пакете)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Match {

@@ -14,6 +14,9 @@ public class MatchScore {
     }
 
     public void addPoint(PlayerSide side) {
+
+        // Можно вынести эту проверку во вспомогательный метод.
+            // Тогда код в addPoint будет читаться более декларативно и будет сосредоточен только на самом счёте.
         if (isFinished()) {
             throw new IllegalStateException("Match already finished");
         }
@@ -25,6 +28,9 @@ public class MatchScore {
     }
 
     public Optional<PlayerSide> getWinner() {
+
+        // Условие из этого if можно вынести во вспомогательный метод (например isWon(PlayerSide.FIRST)).
+            // Это ещё улучшит читаемость и позволит его переиспользовать во втором if.
         if (getSets(PlayerSide.FIRST) >= SETS_TO_WIN) {
             return Optional.of(PlayerSide.FIRST);
         }

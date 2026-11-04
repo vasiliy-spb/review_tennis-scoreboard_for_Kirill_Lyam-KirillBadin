@@ -7,6 +7,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class LiveMatch {
+
+    // Можно добавить в этот класс метод isFinished, чтобы при необходимости вызывать его,
+        // а не liveMatch.getWinnerSide().isEmpty().
+
     @Getter
     private final UUID uuid;
     private final String firstPlayerName;
@@ -16,11 +20,25 @@ public class LiveMatch {
     public LiveMatch(String firstPlayerName, String secondPlayerName) {
         this.firstPlayerName = firstPlayerName;
         this.secondPlayerName = secondPlayerName;
+
+        // Класс текущего матча в этом проекте может не хранить в себе ID.
+            // Но если ID в нём есть, то можно получать его извне (по аналогии с JPA Entity),
+            // а не генерировать в самом классе модели.
         this.uuid = UUID.randomUUID();
         this.matchScore = new MatchScore();
     }
 
     public void addPoint(String name) {
+
+        // TODO: Нет проверки на то, что матч не завершён.
+            // Попытка начислить очко в уже завершённом матче — это не нормальная ситуация и должна приводить к исключению.
+            // Проверка есть ниже по стеку, но каждый класс сам должен защищать свои инварианты.
+
+        // Можно ввести вспомогательный метод и избавиться от блоков if. В таком духе:
+        /*
+        PlayerSide side = getSideFor(name);
+        matchScore.addPoint(side);
+         */
         if (firstPlayerName.equals(name)) {
             matchScore.addPoint(PlayerSide.FIRST);
             return;
@@ -29,6 +47,9 @@ public class LiveMatch {
             matchScore.addPoint(PlayerSide.SECOND);
             return;
         }
+
+        // Валидацию имени игрока лучше проводить в самом начале метода.
+            // Это лучше читается и соответствует принципу Fail Fast по стилю написания.
         throw new PlayerNotInMatchException("Игрок '" + name + "' не найден в матче");
     }
 

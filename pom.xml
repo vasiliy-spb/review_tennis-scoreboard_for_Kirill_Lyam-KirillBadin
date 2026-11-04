@@ -11,6 +11,7 @@
 	<groupId>io.github.kirillbadin</groupId>
 	<artifactId>tennisscoreboard</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<!-- Пустые блоки лучше либо заполнить реальными значениями, либо удалить. -->
 	<name/>
 	<description/>
 	<url/>
@@ -43,11 +44,17 @@
 			<artifactId>spring-boot-starter-webmvc</artifactId>
 		</dependency>
 
+		<!-- Если scope не указан, Maven по умолчанию считает scope compile,
+			поэтому lombok попадёт в jar, хотя нужен только для компиляции.
+			Лучше указать <scope>provided</scope> и исключить его в spring-boot-maven-plugin. -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<!-- Все тесты в проекте используют классы из JUnit 5,
+			поэтому достаточно только одной зависимости spring-boot-starter-test,
+			на которую можно заменить все текущие стартеры -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
@@ -80,6 +87,9 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<!-- Настройки annotationProcessorPaths можно объявить на уровне плагина, а не внутри каждого execution.
+					Тогда они автоматически применятся ко всем execution плагина.
+					Или можно не указывать совсем, если нет необходимости переопределять дефолтные. -->
 				<executions>
 					<execution>
 						<id>default-compile</id>

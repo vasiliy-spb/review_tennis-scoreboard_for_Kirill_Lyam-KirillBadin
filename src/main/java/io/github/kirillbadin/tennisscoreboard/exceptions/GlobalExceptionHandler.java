@@ -20,8 +20,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDto> handleValidation(MethodArgumentNotValidException e){
         String message = e.getBindingResult().getFieldErrors().stream()
-                .findFirst()
-                .map(FieldError::getDefaultMessage)
+                .findFirst() // Лучше возвращать все ошибки, а не только первую, чтобы пользователь сразу мог исправить все недочёты
+                .map(FieldError::getDefaultMessage) // Возвращает только текст сообщения без имени поля — лучше что-то вроде field + ": " + message
                 .orElse("Ошибка валидации");
         return ResponseEntity.badRequest().body(new ErrorResponseDto(message));
     }
@@ -32,6 +32,8 @@ public class GlobalExceptionHandler {
         ErrorResponseDto errorResponse = new ErrorResponseDto(
                 "Произошла непредвиденная ошибка на сервере"
         );
+
+        // Можно так: return ResponseEntity.internalServerError().body(errorResponse);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

@@ -24,6 +24,12 @@ public class MatchController {
     private final LiveMatchService liveMatchService;
 
 
+    // В @PageableDefault нет явного указания направления сортировки.
+        // По умолчанию это сортировка по возрастанию (Sort.Direction.ASC).
+        // При таком подходе последний сыгранный матч окажется последним в списке и
+        // пользователю придётся листать до последней страницы, чтобы найти его в списке завершённых матчей.
+        // Лучше использовать сортировку по убыванию и явно указать direction = Sort.Direction.DESC.
+        // Это улучшит пользовательский опыт.
     @GetMapping
     public ResponseEntity<MatchesPageDto> getMatches(
             @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = "id") Pageable pageable,

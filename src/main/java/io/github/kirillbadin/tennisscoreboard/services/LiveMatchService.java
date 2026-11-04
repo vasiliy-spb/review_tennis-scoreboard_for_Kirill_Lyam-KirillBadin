@@ -16,6 +16,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LiveMatchService {
 
+    // TODO: Класс совмещает несколько разных ответственностей:
+        // - работает с текущими матчами
+        // - занимается преобразованием в DTO
+        //
+        // Это нарушает принцип единой ответственности (SRP).
+        // Стоит вынести логику преобразования в отдельный компонент — маппер.
+
     private final LiveMatchStorage liveMatchStorage;
     private final MatchService matchService;
     private final PlayerService playerService;
@@ -40,7 +47,14 @@ public class LiveMatchService {
         return toMatchStateDto(getMatch(uuid));
     }
 
-
+    // TODO: Race condition при обработке выигранного очка.
+        // Если пользователь дважды быстро нажмёт кнопку выигрыша очка, браузер отправит два POST-запроса почти одновременно.
+        // Оба потока успеют получить ссылку на один и тот же объект LiveMatch до того, как первый завершит матч и удалит его из storage.
+        // Первый поток в synchronized добавит решающее очко и сохранит матч в БД.
+        // Второй поток с уже устаревшей ссылкой вызовет addPoint() на уже завершённом матче,
+        // получит IllegalStateException из MatchScore.addPoint
+        // (дубля в БД не будет, так как до save дело не дойдёт), и пользователь увидит 500 на двойной клик.
+        // Стоит найти решение, как это исправить.
     public MatchStateDto addPoint(UUID uuid, PointRequestDto pointRequestDto) {
         LiveMatch liveMatch = getMatch(uuid);
         synchronized (liveMatch) {
