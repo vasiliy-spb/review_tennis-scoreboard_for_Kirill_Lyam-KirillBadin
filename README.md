@@ -1,3 +1,5 @@
+### [Ревью на реализацию проекта находится здесь](https://github.com/vasiliy-spb/review_tennis-scoreboard_for_Kirill_Lyam-KirillBadin/blob/code-review/code-review/REVIEW_README.md)
+
 # Tennis Scoreboard
 REST API + веб-интерфейс для ведения счёта теннисных матчей в реальном времени:
 очки → геймы → сеты → матч. 
